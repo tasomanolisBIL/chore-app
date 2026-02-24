@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /c/Users/tasom/chore-app && npm install 2>&1)",
+      "Bash(cd /c/Users/tasom/chore-app && curl -s http://localhost:3001/api/team 2>&1)",
+      "Bash(head:*)",
+      "Bash(curl:2)",
+      "Bash(grep:*)",
+      "Bash(tail:*)",
+      "Bash(taskkill:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(cd /c/Users/tasom/chore-app && npm run build 2>&1)",
+      "Bash(python3:*)",
+      "Bash(cd:*)"
+    ]
+  }
+}

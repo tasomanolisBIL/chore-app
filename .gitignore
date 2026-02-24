@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-electron/
+chores.db
+*.db-shm
+*.db-wal
+.env

@@ -1,0 +1,276 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── FullCalendar — TV-friendly overrides ─────────────────────────────── */
+
+/* Gap between individual buttons */
+.fc .fc-button-group .fc-button + .fc-button {
+  margin-left: 4px !important;
+  border-radius: 8px !important;
+}
+.fc .fc-button-group .fc-button:first-child {
+  border-radius: 8px !important;
+}
+
+/* Space between left group and right group */
+.fc .fc-button-group + .fc-button-group,
+.fc .fc-button-group + .fc-button {
+  margin-left: 1.25rem !important;
+}
+
+/* Nav buttons */
+.fc .fc-button {
+  background: var(--header-gradient) !important;
+  background-size: 300% 300% !important;
+  animation: header-shift 10s ease infinite !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  padding: 0.45rem 1rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15) !important;
+}
+.fc .fc-button:hover {
+  filter: brightness(1.15) !important;
+}
+.fc .fc-button-active {
+  filter: brightness(0.8) !important;
+}
+
+/* "February 2026" title */
+.fc .fc-toolbar-title {
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Day-of-week headers (Mon, Tue …) */
+.fc .fc-col-header-cell-cushion {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  padding: 0.55rem 0 !important;
+  color: #475569 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Day number */
+.fc .fc-daygrid-day-number {
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  padding: 0.4rem 0.65rem !important;
+  color: #334155 !important;
+}
+
+/* Today highlight — glowing border pulse */
+@keyframes today-glow {
+  0%, 100% { box-shadow: inset 0 0 0 2px var(--today-glow-color), 0 0 10px var(--today-glow-low); }
+  50%       { box-shadow: inset 0 0 0 2px var(--today-glow-color), 0 0 22px var(--today-glow-high); }
+}
+.fc .fc-day-today {
+  background-color: var(--today-bg) !important;
+  animation: today-glow 2.5s ease-in-out infinite !important;
+  z-index: 1 !important;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+  color: var(--today-number) !important;
+  font-weight: 800 !important;
+}
+
+/* Weekend columns — subtle tint */
+.fc .fc-day-sat,
+.fc .fc-day-sun {
+  background-color: #fafafa !important;
+}
+
+/* Event tiles — regular (month/week default) */
+.fc-event {
+  cursor: pointer !important;
+  border-radius: 6px !important;
+  margin-bottom: 2px !important;
+  min-height: 22px !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18) !important;
+  transition: filter 0.12s, transform 0.1s, box-shadow 0.12s !important;
+  border: none !important;
+}
+.fc-event:hover {
+  filter: brightness(1.07) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28) !important;
+}
+.fc-event .fc-event-main {
+  padding: 0 !important;
+}
+
+/* Week view — mini cards */
+.fc-dayGridWeek-view .fc-event {
+  min-height: 70px !important;
+  border-radius: 10px !important;
+  margin-bottom: 4px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+}
+
+/* Empty day placeholder — invisible shell */
+.fc-event.no-chores-placeholder {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+  min-height: 70px !important;
+}
+.fc-dayGridWeek-view .fc-event .fc-event-main {
+  height: 100% !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+.fc-dayGridWeek-view .fc-event .fc-event-main > div {
+  height: 100% !important;
+}
+
+/* Day view — full size */
+.fc-dayGridDay-view .fc-event {
+  min-height: 130px !important;
+  border-radius: 18px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.32) !important;
+}
+.fc-dayGridDay-view .fc-event .fc-event-main {
+  height: 100% !important;
+  display: flex !important;
+  align-items: stretch !important;
+}.fc-dayGridDay-view .fc-event.incentive-event {
+  min-height: 130px !important;
+  animation: incentive-pulse 2.8s ease-in-out infinite !important;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0.6; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes gear-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.gear-btn .gear-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.gear-btn .gear-icon.spin-click {
+  animation: gear-spin 0.45s ease-out !important;
+}
+
+@keyframes header-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.header-animated {
+  background: var(--header-gradient);
+  background-size: 300% 300%;
+  animation: header-shift 10s ease infinite;
+}
+
+@keyframes incentive-pulse {
+  0%, 100% {
+    box-shadow: 0 6px 28px rgba(245,158,11,0.55), 0 0 0 0px rgba(254,240,138,0.3), 0 2px 8px rgba(0,0,0,0.3);
+  }
+  50% {
+    box-shadow: 0 10px 48px rgba(245,158,11,0.9), 0 0 0 5px rgba(254,240,138,0.18), 0 3px 12px rgba(0,0,0,0.35);
+  }
+}
+
+@keyframes incentive-shimmer {
+  0%   { transform: translateX(-150%) skewX(-12deg); }
+  100% { transform: translateX(350%)  skewX(-12deg); }
+}
+
+@keyframes pending-pulse {
+  0%, 100% { box-shadow: 0 4px 18px rgba(0,0,0,0.22), 0 0 0 2px rgba(251,191,36,0.5); }
+  50%       { box-shadow: 0 4px 28px rgba(0,0,0,0.28), 0 0 0 4px rgba(251,191,36,0.85), 0 0 18px rgba(251,191,36,0.4); }
+}
+
+/* Incentive events — supersized, glowing */
+.fc-event.incentive-event {
+  box-shadow: 0 5px 22px rgba(22,163,74,0.55), 0 2px 6px rgba(0,0,0,0.15) !important;
+}
+.fc-dayGridDay-view .fc-event.incentive-event {
+  min-height: 130px !important;
+}
+.fc-event.incentive-event:hover {
+  box-shadow: 0 8px 28px rgba(22,163,74,0.7), 0 3px 8px rgba(0,0,0,0.15) !important;
+  transform: translateY(-3px) !important;
+}
+
+
+
+@keyframes complete-collapse {
+  0%   { transform: scaleY(1.08) translateY(-4px); opacity: 0.2; }
+  40%  { opacity: 0.55; }
+  100% { transform: scaleY(1) translateY(0);       opacity: 0.72; }
+}
+
+@keyframes pending-expand {
+  0%   { transform: scaleY(0.5) translateY(8px); opacity: 0; }
+  70%  { transform: scaleY(1.04) translateY(-2px); }
+  100% { transform: scaleY(1) translateY(0);     opacity: 1; }
+}
+
+/* Completed — soften + shrink in day view */
+.fc-event.completed {
+  opacity: 0.72;
+}
+.fc-dayGridDay-view .fc-event.completed {
+  min-height: 64px !important;
+  transform-origin: top center;
+  animation: complete-collapse 0.55s ease-out forwards !important;
+}
+.fc-dayGridDay-view .fc-event.pending-event {
+  transform-origin: top center;
+  animation: pending-pulse 2s ease-in-out infinite, pending-expand 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Day row height */
+.fc .fc-daygrid-body tr {
+  min-height: 80px !important;
+}
+
+/* "X more" link */
+.fc .fc-daygrid-more-link {
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  color: var(--more-link) !important;
+}
+
+/* Remove default border on day cells */
+.fc .fc-daygrid-day {
+  border-color: #334155 !important;
+}
+
+/* ─── Dark mode — FullCalendar internals (only when .dark-theme on root) ── */
+.dark-theme .fc-theme-standard td,
+.dark-theme .fc-theme-standard th,
+.dark-theme .fc-theme-standard .fc-scrollgrid {
+  border-color: #334155 !important;
+}
+.dark-theme .fc .fc-daygrid-day {
+  background: #1e293b !important;
+}
+.dark-theme .fc .fc-day-sat,
+.dark-theme .fc .fc-day-sun {
+  background-color: #192235 !important;
+}
+.dark-theme .fc .fc-col-header-cell-cushion {
+  color: #64748b !important;
+}
+.dark-theme .fc .fc-daygrid-day-number {
+  color: #94a3b8 !important;
+}
+.dark-theme .fc .fc-toolbar-title {
+  color: #f1f5f9 !important;
+}
+/* --more-link and --today-bg are set per mode by applyTheme() — no overrides needed here */
