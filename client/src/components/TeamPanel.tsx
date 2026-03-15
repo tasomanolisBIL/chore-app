@@ -14,7 +14,6 @@ interface Props {
   onFilterChange: (id: number) => void
   darkMode: boolean
   season: Season
-  onAnalyticsOpen: () => void
 }
 
 export function getAssigneeColor(assigneeId: number | null, members: TeamMember[], season: Season): string {
@@ -30,7 +29,7 @@ export function getMemberBgClass(memberId: number, season: Season): string {
   return palette[memberId % palette.length].bg
 }
 
-export default function TeamPanel({ members, instances, onAdd, onRemove, open, onToggle, filterAssigneeId, onFilterChange, darkMode, season, onAnalyticsOpen }: Props) {
+export default function TeamPanel({ members, instances, onAdd, onRemove, open, onToggle, filterAssigneeId, onFilterChange, darkMode, season }: Props) {
   const dk = darkMode
   const palette = THEMES[season].palette
   const accentColor = THEMES[season].accentBar
@@ -120,29 +119,6 @@ export default function TeamPanel({ members, instances, onAdd, onRemove, open, o
           }}>
             Team
           </p>
-
-          {/* Analytics button */}
-          <button
-            onClick={onAnalyticsOpen}
-            className="header-animated"
-            style={{
-              width: '100%',
-              textAlign: 'left',
-              padding: '7px 10px',
-              borderRadius: '8px',
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              marginBottom: '8px',
-              cursor: 'pointer',
-              color: '#fff',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            <span style={{ fontSize: '1rem', lineHeight: 1 }}>📊</span> Analytics
-          </button>
 
           {/* All / clear filter button */}
           <button

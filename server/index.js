@@ -1,9 +1,12 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import choreRoutes from './routes/chores.js'
 import teamRoutes from './routes/team.js'
+import settingsRoutes from './routes/settings.js'
+import { initScheduler } from './scheduler.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -16,6 +19,7 @@ app.use(express.json())
 // API routes
 app.use('/api/chores', choreRoutes)
 app.use('/api/team', teamRoutes)
+app.use('/api/settings', settingsRoutes)
 
 // Serve built client in production
 if (isProd) {
@@ -28,4 +32,5 @@ if (isProd) {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`)
+  initScheduler()
 })

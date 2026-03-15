@@ -5,7 +5,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import type { EventClickArg, DatesSetArg, EventContentArg } from '@fullcalendar/core'
 import type { ChoreInstance, TeamMember } from '../api'
 import { getAssigneeColor } from './TeamPanel'
-import type { Season, ThemeMode } from '../themes'
+import type { Season } from '../themes'
 
 interface Props {
   instances: ChoreInstance[]
@@ -15,10 +15,10 @@ interface Props {
   onAddChore: (date?: string) => void
   onComplete: (choreId: number, date: string) => void
   onUncomplete: (choreId: number, date: string) => void
+  onAnalyticsOpen: () => void
+  onSettingsOpen: () => void
   darkMode: boolean
   season: Season
-  mode: ThemeMode
-  onThemeChange: (s: Season, m: ThemeMode) => void
 }
 
 const INCENTIVE_COLOR  = '#92400e'
@@ -42,7 +42,7 @@ const LiveClock = memo(function LiveClock() {
   )
 })
 
-export default function CalendarView({ instances, members, onEventClick, onDateRangeChange, onAddChore, onComplete, onUncomplete, darkMode, season, mode, onThemeChange }: Props) {
+export default function CalendarView({ instances, members, onEventClick, onDateRangeChange, onAddChore, onComplete, onUncomplete, onAnalyticsOpen, onSettingsOpen, darkMode, season }: Props) {
   const calendarRef = useRef<FullCalendar>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -59,20 +59,6 @@ export default function CalendarView({ instances, members, onEventClick, onDateR
 
   const [viewType, setViewType] = useState('dayGridMonth')
   const [localDateRange, setLocalDateRange] = useState<{ start: string; end: string } | null>(null)
-
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [gearSpinning, setGearSpinning] = useState(false)
-  const settingsRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!settingsOpen) return
-    const handle = (e: MouseEvent) => {
-      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
-        setSettingsOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handle)
-    return () => document.removeEventListener('mousedown', handle)
-  }, [settingsOpen])
 
   // Empty-day placeholders for week view
   const choresDates = new Set(instances.map(i => i.occurrence_date))
@@ -434,175 +420,39 @@ export default function CalendarView({ instances, members, onEventClick, onDateR
         {/* Live clock */}
         <LiveClock />
 
-        {/* Add Chore + Settings — grouped */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <button
-          onClick={() => onAddChore()}
-          style={{
-            background: 'rgba(255,255,255,0.15)',
-            border: '2px solid rgba(255,255,255,0.35)',
-            color: '#fff',
-            padding: '0.65rem 1.4rem',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            backdropFilter: 'blur(4px)',
-            transition: 'background 0.15s',
-            letterSpacing: '0.01em',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.25)')}
-          onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
-        >
-          + Add Chore
-        </button>
-
-        {/* Settings */}
-        <div ref={settingsRef} style={{ position: 'relative' }}>
-          <button
-            onClick={() => { setSettingsOpen(v => !v); setGearSpinning(true) }}
-            title="Settings"
-            className="gear-btn"
-            style={{
-              background: settingsOpen ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.15)',
-              border: '2px solid rgba(255,255,255,0.35)',
-              color: '#fff',
-              width: '2.6rem',
-              height: '2.6rem',
-              borderRadius: '12px',
-              fontSize: '1.2rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <span
-              className={`gear-icon${gearSpinning ? ' spin-click' : ''}`}
-              onAnimationEnd={() => setGearSpinning(false)}
-            >⚙</span>
-          </button>
-
-          {settingsOpen && (() => {
-            const cardBg  = darkMode ? '#1e293b' : '#fff'
-            const textColor = darkMode ? '#f1f5f9' : '#1e293b'
-            const hoverBg = darkMode ? '#263548' : '#f1f5f9'
-            const SEASON_OPTIONS: { key: Season; label: string; icon: string }[] = [
-              { key: 'classic', label: 'Default', icon: '' },
-              { key: 'winter',  label: 'Winter',  icon: '❄️'  },
-              { key: 'spring',  label: 'Spring',  icon: '🌸'  },
-              { key: 'summer',  label: 'Summer',  icon: '☀️'  },
-              { key: 'autumn',  label: 'Autumn',  icon: '🍂'  },
-            ]
-            return (
-              <div style={{
-                position: 'absolute',
-                top: 'calc(100% + 8px)',
-                right: 0,
-                background: cardBg,
-                border: `1px solid ${darkMode ? '#334155' : '#e2e8f0'}`,
-                borderRadius: '12px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-                padding: '10px',
-                minWidth: '210px',
-                zIndex: 100,
-              }}>
-                {/* Season label */}
-                <div style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', color: '#64748b', textTransform: 'uppercase', marginBottom: '6px', paddingLeft: '2px' }}>
-                  Theme
-                </div>
-
-                {/* Classic — full width */}
-                {SEASON_OPTIONS.slice(0, 1).map(opt => (
-                  <button
-                    key={opt.key}
-                    onClick={() => onThemeChange(opt.key, mode)}
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      padding: '6px 8px',
-                      borderRadius: '20px',
-                      border: season === opt.key ? '2px solid transparent' : `1px solid ${darkMode ? '#334155' : '#e2e8f0'}`,
-                      background: season === opt.key ? 'var(--header-gradient)' : cardBg,
-                      backgroundSize: season === opt.key ? '300% 300%' : undefined,
-                      animation: season === opt.key ? 'header-shift 10s ease infinite' : undefined,
-                      color: season === opt.key ? '#fff' : textColor,
-                      fontSize: '0.82rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <span>{opt.icon}</span>
-                    <span>{opt.label}</span>
-                  </button>
-                ))}
-
-                {/* Seasons — 2-col grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px', marginBottom: '8px' }}>
-                  {SEASON_OPTIONS.slice(1).map(opt => (
-                    <button
-                      key={opt.key}
-                      onClick={() => onThemeChange(opt.key, mode)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px',
-                        padding: '6px 8px',
-                        borderRadius: '20px',
-                        border: season === opt.key ? '2px solid transparent' : `1px solid ${darkMode ? '#334155' : '#e2e8f0'}`,
-                        background: season === opt.key ? 'var(--header-gradient)' : cardBg,
-                        backgroundSize: season === opt.key ? '300% 300%' : undefined,
-                        animation: season === opt.key ? 'header-shift 10s ease infinite' : undefined,
-                        color: season === opt.key ? '#fff' : textColor,
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <span>{opt.icon}</span>
-                      <span>{opt.label}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Divider */}
-                <div style={{ height: '1px', background: darkMode ? '#334155' : '#e2e8f0', margin: '2px 0 6px' }} />
-
-                {/* Dark / light toggle */}
-                <button
-                  onClick={() => { onThemeChange(season, mode === 'dark' ? 'light' : 'dark'); setSettingsOpen(false) }}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    border: 'none',
-                    textAlign: 'left',
-                    transition: 'background 0.12s',
-                    color: textColor,
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <span style={{ fontSize: '1.1rem' }}>{darkMode ? '☀️' : '☾'}</span>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
-                    {darkMode ? 'Light Mode' : 'Dark Mode'}
-                  </span>
-                </button>
-              </div>
-            )
-          })()}
-        </div>
-        </div>{/* end grouped */}
+        {/* Nav menu */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(0,0,0,0.15)', borderRadius: '14px', padding: '4px' }}>
+          {[
+            { label: '+ Add Chore', icon: null,  onClick: () => onAddChore() },
+            { label: 'Analytics',  icon: '📊', onClick: onAnalyticsOpen  },
+            { label: 'Settings',   icon: '⚙️',  onClick: onSettingsOpen   },
+          ].map(item => (
+            <button
+              key={item.label}
+              onClick={item.onClick}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#fff',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'background 0.15s',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              {item.icon && <span style={{ fontSize: '1rem' }}>{item.icon}</span>}
+              {item.label}
+            </button>
+          ))}
+        </nav>
       </div>
 
       {/* ── Calendar ── */}

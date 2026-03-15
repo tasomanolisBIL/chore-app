@@ -36,6 +36,11 @@ db.exec(`
     completed_at TEXT DEFAULT (datetime('now')),
     UNIQUE(chore_id, occurrence_date)
   );
+
+  CREATE TABLE IF NOT EXISTS settings (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
 `)
 
 // Migrations — safe to run every startup (SQLite throws on duplicate column, we ignore)

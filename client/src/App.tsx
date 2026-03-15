@@ -6,7 +6,7 @@ import ChoreModal from './components/ChoreModal'
 import CompletionModal from './components/CompletionModal'
 import TeamPanel from './components/TeamPanel'
 import AnalyticsDashboard from './components/AnalyticsDashboard'
-import { requestNotificationPermission, scheduleNotificationsForToday } from './notifications'
+import SettingsPanel from './components/SettingsPanel'
 import { applyTheme } from './themes'
 import type { Season, ThemeMode } from './themes'
 
@@ -21,9 +21,9 @@ export default function App() {
   const [modal, setModal] = useState<ModalState>({ type: 'none' })
   const [teamPanelOpen, setTeamPanelOpen] = useState(true)
   const [analyticsOpen, setAnalyticsOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [filterAssigneeId, setFilterAssigneeId] = useState<number | null>(null)
   const [dateRange, setDateRange] = useState<{ start: string; end: string } | null>(null)
-  const [notified, setNotified] = useState(false)
   const [season, setSeason] = useState<Season>(() => {
     try { return (JSON.parse(localStorage.getItem('theme') || '{}').season ?? 'classic') as Season }
     catch { return 'classic' }
@@ -53,17 +53,10 @@ export default function App() {
     try {
       const data = await api.getChores(start, end)
       setInstances(data)
-      if (!notified) {
-        const granted = await requestNotificationPermission()
-        if (granted) {
-          scheduleNotificationsForToday(data)
-          setNotified(true)
-        }
-      }
     } catch (err) {
       console.error('Failed to load chores:', err)
     }
-  }, [notified])
+  }, [])
 
   useEffect(() => {
     if (dateRange) {
@@ -152,10 +145,10 @@ export default function App() {
         onAddChore={openAddChore}
         onComplete={handleComplete}
         onUncomplete={handleUncomplete}
+        onAnalyticsOpen={() => setAnalyticsOpen(true)}
+        onSettingsOpen={() => setSettingsOpen(true)}
         darkMode={darkMode}
         season={season}
-        mode={mode}
-        onThemeChange={setTheme}
       />
 
       {/* Team panel (right sidebar) */}
@@ -170,7 +163,6 @@ export default function App() {
         onFilterChange={id => setFilterAssigneeId(prev => prev === id ? null : id)}
         darkMode={darkMode}
         season={season}
-        onAnalyticsOpen={() => setAnalyticsOpen(true)}
       />
 
       {/* Modals */}
@@ -185,11 +177,21 @@ export default function App() {
           darkMode={darkMode}
         />
       )}
+      {settingsOpen && (
+        <SettingsPanel
+          onClose={() => setSettingsOpen(false)}
+          darkMode={darkMode}
+          season={season}
+          mode={mode}
+          onThemeChange={setTheme}
+        />
+      )}
       {analyticsOpen && (
         <AnalyticsDashboard
           members={members}
           onClose={() => setAnalyticsOpen(false)}
           darkMode={darkMode}
+          season={season}
         />
       )}
       {modal.type === 'completion' && (
