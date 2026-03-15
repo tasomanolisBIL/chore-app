@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { api } from '../api'
 import type { ChoreInstance, TeamMember } from '../api'
 import { getAssigneeColor } from './TeamPanel'
+import type { Season } from '../themes'
 
 // ── Month list ─────────────────────────────────────────────────────────────
 interface MonthEntry { label: string; short: string; start: string; end: string; key: string }
@@ -73,9 +74,9 @@ function rateColor(r: number) { return r >= 80 ? '#16a34a' : r >= 55 ? '#f59e0b'
 function rateLabel(r: number) { return r >= 80 ? 'Excellent' : r >= 55 ? 'Good' : 'Needs attention' }
 function streakColor(n: number) { return n >= 8 ? '#16a34a' : n >= 4 ? '#f59e0b' : '#3b82f6' }
 
-interface Props { members: TeamMember[]; onClose: () => void; darkMode: boolean }
+interface Props { members: TeamMember[]; onClose: () => void; darkMode: boolean; season: Season }
 
-export default function AnalyticsDashboard({ members, onClose, darkMode }: Props) {
+export default function AnalyticsDashboard({ members, onClose, darkMode, season }: Props) {
   const months = buildMonthList(18)
 
   const [selectedKey,     setSelectedKey]     = useState(months[0].key)
@@ -259,7 +260,7 @@ export default function AnalyticsDashboard({ members, onClose, darkMode }: Props
                     <p style={{ fontSize: '0.65rem', fontWeight: 800, color: textSec, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Team Performance</p>
                     <div style={{ background: card, border: `1px solid ${border}`, borderRadius: '12px', overflow: 'hidden' }}>
                       {memberStats.map((s, i) => {
-                        const color = getAssigneeColor(s.member.id, members)
+                        const color = getAssigneeColor(s.member.id, members, season)
                         return (
                           <div key={s.member.id} style={{
                             padding: '0.75rem 1rem',

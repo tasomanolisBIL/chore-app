@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import db from '../db.js'
 import { expandOccurrences } from '../recurrence.js'
+import { checkAndSendAllDone } from '../sms.js'
 
 const router = Router()
 
@@ -173,6 +174,7 @@ router.post('/:id/complete', (req, res) => {
       INSERT INTO chore_completions (chore_id, occurrence_date) VALUES (?, ?)
     `).run(id, occurrence_date)
     res.status(201).json({ success: true })
+    checkAndSendAllDone().catch(err => console.error('[SMS] All-done check error:', err))
   } catch (err) {
     res.status(409).json({ error: 'Already completed' })
   }

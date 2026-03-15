@@ -34,6 +34,13 @@ export interface ChoreInstance {
   completed_at: string | null
 }
 
+export interface SmsSettings {
+  twilio_sid: string
+  twilio_token: string
+  twilio_from: string
+  manager_phone: string
+}
+
 export interface CreateChorePayload {
   title: string
   description?: string
@@ -89,4 +96,11 @@ export const api = {
       method: 'DELETE',
       body: JSON.stringify({ occurrence_date }),
     }),
+
+  // Settings
+  getSettings: () => request<Partial<SmsSettings>>('/settings'),
+  saveSettings: (s: Partial<SmsSettings>) =>
+    request<{ success: boolean }>('/settings', { method: 'POST', body: JSON.stringify(s) }),
+  testSMS: () =>
+    request<{ success: boolean; error?: string }>('/settings/test', { method: 'POST' }),
 }
