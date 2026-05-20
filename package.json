@@ -1,6 +1,6 @@
 {
   "name": "chore-app",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Office chore management app",
   "main": "electron/main.cjs",
   "type": "module",
