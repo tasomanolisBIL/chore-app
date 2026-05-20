@@ -48,6 +48,7 @@
       "deleteAppDataOnUninstall": false
     },
     "mac": {
+      "icon": "build-resources/icon.png",
       "target": [
         {
           "target": "dmg",
