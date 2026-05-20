@@ -1,6 +1,6 @@
 {
   "name": "chore-app",
-  "version": "1.1.0",
+  "version": "1.2.2",
   "description": "Office chore management app",
   "main": "electron/main.cjs",
   "type": "module",
@@ -12,7 +12,11 @@
     "start": "NODE_ENV=production node --no-warnings server/index.js",
     "electron:preview": "npm run build && electron .",
     "electron:build": "npm run build && electron-builder --win",
-    "electron:publish": "npm run build && electron-builder --win --publish always"
+    "electron:build:mac": "npm run build && electron-builder --mac",
+    "electron:build:all": "npm run build && electron-builder -mw",
+    "electron:publish": "npm run build && electron-builder --win --publish always",
+    "electron:publish:mac": "npm run build && electron-builder --mac --publish always",
+    "electron:publish:all": "npm run build && electron-builder -mw --publish always"
   },
   "build": {
     "appId": "com.office.choreapp",
@@ -26,7 +30,9 @@
       "electron/**",
       "package.json"
     ],
+    "icon": "build-resources/icon.ico",
     "win": {
+      "icon": "build-resources/icon.ico",
       "target": [
         {
           "target": "nsis",
@@ -40,6 +46,31 @@
       "oneClick": false,
       "perMachine": false,
       "deleteAppDataOnUninstall": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "identity": null
+    },
+    "dmg": {
+      "title": "${productName} ${version}"
     },
     "publish": {
       "provider": "github",
